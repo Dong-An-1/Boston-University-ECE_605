@@ -20,17 +20,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 module Data_Memory (
     input clk,
-    input [15:0] mem_access_addr,  // Address input, shared by read and write port
-    input [31:0] mem_write_data,   // 32-bit data to write
-    input mem_write_en,            // Write enable signal
-    input mem_read,                // Read enable signal
-    output reg [31:0] mem_read_data // 32-bit data output for read
+    input [15:0] mem_access_addr,  // 地址输入，读写操作共用
+    input [31:0] mem_write_data,   // 32位写入数据
+    input mem_write_en,            // 写使能信号
+    input mem_read,                // 读使能信号
+    output reg [31:0] mem_read_data // 32位读出数据
 );
 
-    // Define a 64 x 32-bit memory array, matching register file size recommendation
+    // 定义一个64 x 32位的存储器数组，与寄存器文件的建议大小相匹配
     reg [31:0] memory [63:0];
 
-    // Initialize memory to zero
+    // 初始化存储器为零
     integer i;
     initial begin
         for (i = 0; i < 64; i = i + 1) begin
@@ -38,22 +38,33 @@ module Data_Memory (
         end
     end
 
-    // Write operation (synchronous with clock edge, similar to Register_File)
+    // 写操作（与时钟沿同步，类似于Register_File）
     always @(posedge clk) begin
         if (mem_write_en) begin
             memory[mem_access_addr[5:0]] <= mem_write_data;
         end
     end
 
-    // Read operation (asynchronous, similar to Register_File)
+    // 读操作（异步，类似于Register_File）
     always @(*) begin
         if (mem_read) begin
             mem_read_data = memory[mem_access_addr[5:0]];
         end else begin
-            mem_read_data = 32'd0;  // Default output when read is not enabled
+            mem_read_data = 32'd0;  // 当读未使能时，默认输出0
         end
     end
 
 endmodule
+```
 
+### 中文注释说明
+- `mem_access_addr`：地址输入，共用在读写端口之间。
+- `mem_write_data`：32位写入数据。
+- `mem_write_en`：写使能信号，当该信号有效时允许写入操作。
+- `mem_read`：读使能信号，当该信号有效时允许读操作。
+- `mem_read_data`：32位读出数据，用于读取操作。
+- `memory`：定义了一个64行，每行32位的存储器数组，存储器的总大小为64 x 32位。
+- 初始化部分：使用`initial`块将存储器初始化为零。
+- 写操作：在时钟的正沿执行，当`mem_write_en`有效时，将`mem_write_data`写入到指定的内存地址。
+- 读操作：异步执行，当`mem_read`有效时，从指定地址读取数据。
 
