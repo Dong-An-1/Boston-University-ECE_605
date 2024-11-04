@@ -23,41 +23,41 @@ module Register_File(ReadSelect1, ReadSelect2, WriteSelect, WriteData, WriteEnab
 
     parameter BITSIZE = 32;
     parameter REGSIZE = 32;
-    input [$clog2(REGSIZE)-1:0] ReadSelect1, ReadSelect2, WriteSelect;
-    input [BITSIZE-1:0] WriteData;
-    input WriteEnable;
-    output reg [BITSIZE-1:0] ReadData1, ReadData2;
-    input clk, rst;
+    input [$clog2(REGSIZE)-1:0] ReadSelect1, ReadSelect2, WriteSelect; // 读选择1、读选择2和写选择
+    input [BITSIZE-1:0] WriteData;                                     // 写入数据
+    input WriteEnable;                                                 // 写使能信号
+    output reg [BITSIZE-1:0] ReadData1, ReadData2;                     // 输出的读数据1和读数据2
+    input clk, rst;                                                    // 时钟和复位信号
 
-    reg [BITSIZE-1:0] reg_file [REGSIZE-1:0];   // Entire list of registers
+    reg [BITSIZE-1:0] reg_file [REGSIZE-1:0];   // 寄存器文件，包含所有寄存器
     
     initial
     begin
-        reg_file[0] = 32'b0; // initialize x0 as 0;
+        reg_file[0] = 32'b0; // 初始化 x0 为 0
     end
-    integer i;                                  // Used below to rst all registers
+    integer i; // 用于复位所有寄存器
 
-    // Asyncronous read of register file.
+    // 寄存器文件的异步读操作（读取 ReadSelect1 指定的寄存器）
     always @(ReadSelect1, reg_file[ReadSelect1])
         begin
             ReadData1 = reg_file[ReadSelect1];
         end
 
-    // Asyncronous read of register file.
+    // 寄存器文件的异步读操作（读取 ReadSelect2 指定的寄存器）
     always @(ReadSelect2, reg_file[ReadSelect2])
         begin
             ReadData2 = reg_file[ReadSelect2];
         end
 
-    // Write back to register file on clk edge.
+    // 在时钟上升沿将数据写回寄存器文件
     always @(posedge clk)
         begin
             if (rst)
-                for (i=0; i<REGSIZE; i=i+1) reg_file[i] <= 32'b0; // rst all registers
+                for (i=0; i<REGSIZE; i=i+1) reg_file[i] <= 32'b0; // 复位所有寄存器
             else
             begin
                 if (WriteEnable && WriteSelect != 0)
-                    reg_file[WriteSelect] <= WriteData; //If writeback is enabled and not register0.
+                    reg_file[WriteSelect] <= WriteData; // 如果写使能开启且非零号寄存器，则写入数据
             end
         end
 
