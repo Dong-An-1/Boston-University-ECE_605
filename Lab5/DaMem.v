@@ -55,16 +55,6 @@ module Data_Memory (
     end
 
 endmodule
-```
 
-### 中文注释说明
-- `mem_access_addr`：地址输入，共用在读写端口之间。
-- `mem_write_data`：32位写入数据。
-- `mem_write_en`：写使能信号，当该信号有效时允许写入操作。
-- `mem_read`：读使能信号，当该信号有效时允许读操作。
-- `mem_read_data`：32位读出数据，用于读取操作。
-- `memory`：定义了一个64行，每行32位的存储器数组，存储器的总大小为64 x 32位。
-- 初始化部分：使用`initial`块将存储器初始化为零。
-- 写操作：在时钟的正沿执行，当`mem_write_en`有效时，将`mem_write_data`写入到指定的内存地址。
-- 读操作：异步执行，当`mem_read`有效时，从指定地址读取数据。
+
 
